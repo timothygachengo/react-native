@@ -70,16 +70,6 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
-    avoidCeilingAvailableAndroidTextWidth: {
-      defaultValue: true,
-      metadata: {
-        description:
-          'Do not incorrectly ceil the available width of an Android text layout',
-        expectedReleaseValue: true,
-        purpose: 'release',
-      },
-      ossReleaseStage: 'stable',
-    },
     cxxNativeAnimatedEnabled: {
       defaultValue: false,
       metadata: {
@@ -449,6 +439,16 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
+    enableVirtualViewDebugFeatures: {
+      defaultValue: false,
+      metadata: {
+        description:
+          'Enables VirtualView debug features such as logging and overlays.',
+        expectedReleaseValue: false,
+        purpose: 'operational',
+      },
+      ossReleaseStage: 'none',
+    },
     fixMappingOfEventPrioritiesBetweenFabricAndReact: {
       defaultValue: false,
       metadata: {
@@ -481,16 +481,6 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
-    incorporateMaxLinesDuringAndroidLayout: {
-      defaultValue: true,
-      metadata: {
-        description:
-          'Set maxLines and ellipsization during Android layout creation',
-        expectedReleaseValue: true,
-        purpose: 'release',
-      },
-      ossReleaseStage: 'stable',
-    },
     traceTurboModulePromiseRejectionsOnAndroid: {
       defaultValue: false,
       metadata: {
@@ -521,16 +511,6 @@ const definitions: FeatureFlagDefinitions = {
         purpose: 'release',
       },
       ossReleaseStage: 'none',
-    },
-    useAndroidTextLayoutWidthDirectly: {
-      defaultValue: true,
-      metadata: {
-        description:
-          'Trust the width of a text layout we create, instead of re-deriving it from its contents',
-        expectedReleaseValue: true,
-        purpose: 'release',
-      },
-      ossReleaseStage: 'stable',
     },
     useFabricInterop: {
       defaultValue: true,
@@ -681,16 +661,6 @@ const definitions: FeatureFlagDefinitions = {
           'Enables access to the host tree in Fabric using DOM-compatible APIs.',
         expectedReleaseValue: true,
         purpose: 'release',
-      },
-      ossReleaseStage: 'none',
-    },
-    enableVirtualViewDebugFeatures: {
-      defaultValue: false,
-      metadata: {
-        description:
-          'Enables VirtualView debug features such as logging and overlays.',
-        expectedReleaseValue: false,
-        purpose: 'operational',
       },
       ossReleaseStage: 'none',
     },

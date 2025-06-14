@@ -23,9 +23,15 @@ const {
 } = require('@microsoft/api-extractor');
 const {promises: fs} = require('fs');
 const glob = require('glob');
+const {diff} = require('jest-diff');
 const path = require('path');
 const prettier = require('prettier');
 const osTempDir = require('temp-dir');
+const {styleText} = require('util');
+
+const inputFilesPostTransforms: $ReadOnlyArray<PluginObj<mixed>> = [
+  require('./transforms/renameDefaultExportedIdentifiers'),
+];
 
 const postTransforms: $ReadOnlyArray<PluginObj<mixed>> = [
   require('./transforms/sortTypeDefinitions'),
@@ -33,7 +39,7 @@ const postTransforms: $ReadOnlyArray<PluginObj<mixed>> = [
   require('./transforms/sortUnions'),
 ];
 
-async function buildAPISnapshot() {
+async function buildAPISnapshot(validate: boolean) {
   const tempDirectory = await createTempDir('react-native-js-api-snapshot');
   const packages = await findPackagesWithTypedef();
 
@@ -52,12 +58,23 @@ async function buildAPISnapshot() {
   if (extractorResult.succeeded) {
     const apiSnapshot = apiSnapshotTemplate(
       await getCleanedUpRollup(tempDirectory),
-    );
+    ) as string;
 
-    await fs.writeFile(
-      path.join(REACT_NATIVE_PACKAGE_DIR, 'ReactNativeApi.d.ts'),
-      apiSnapshot,
-    );
+    if (validate) {
+      const prevSnapshot = await fs.readFile(
+        path.join(REACT_NATIVE_PACKAGE_DIR, 'ReactNativeApi.d.ts'),
+        'utf-8',
+      );
+      const hasChanged = await validateSnapshots(prevSnapshot, apiSnapshot);
+      if (hasChanged) {
+        process.exitCode = 1;
+      }
+    } else {
+      await fs.writeFile(
+        path.join(REACT_NATIVE_PACKAGE_DIR, 'ReactNativeApi.d.ts'),
+        apiSnapshot,
+      );
+    }
   } else {
     process.exitCode = 1;
     console.error(
@@ -67,6 +84,32 @@ async function buildAPISnapshot() {
   }
 
   await fs.rm(tempDirectory, {recursive: true});
+}
+
+async function validateSnapshots(
+  prevSnapshot: string,
+  newSnapshot: string,
+): Promise<boolean> {
+  const hasChanged = newSnapshot !== prevSnapshot;
+  if (hasChanged) {
+    const options = {
+      aAnnotation: 'Previous Snapshot',
+      bAnnotation: 'New Snapshot',
+      expand: false,
+      emptyFirstOrLastLinePlaceholder: '↵',
+      includeChangeCounts: true,
+      aColor: (line: string) => styleText(['red'], line),
+      bColor: (line: string) => styleText(['green'], line),
+    };
+
+    const diffResult = diff(prevSnapshot, newSnapshot, options);
+    console.error(
+      `\n${styleText(['inverse'], ' VALIDATE ')} ReactNativeApi.d.ts has changed. Please re-run \`yarn build-types\` and commit the updated snapshot.\n\n`,
+      diffResult,
+    );
+  }
+
+  return hasChanged;
 }
 
 async function findPackagesWithTypedef() {
@@ -106,6 +149,18 @@ async function preparePackagesInTempDir(
         path.join(PACKAGES_DIR, pkg.directory, TYPES_OUTPUT_DIR),
         path.join(tempDirectory, pkg.directory),
       );
+    }),
+  );
+
+  const typeDefs = glob.sync(`${tempDirectory}/**/*.d.ts`);
+  await Promise.all(
+    typeDefs.map(async file => {
+      const source = await fs.readFile(file, 'utf-8');
+      const transformed = await applyPostTransforms(
+        source,
+        inputFilesPostTransforms,
+      );
+      await fs.writeFile(file, transformed);
     }),
   );
 }
@@ -149,7 +204,10 @@ async function getCleanedUpRollup(tempDirectory: string) {
     .replace(/^\s+$/gm, '') // Clear whitespace-only lines
     .replace(/\n+/gm, '\n'); // Collapse empty lines
 
-  const transformedRollup = await applyPostTransforms(cleanedRollup);
+  const transformedRollup = await applyPostTransforms(
+    cleanedRollup,
+    postTransforms,
+  );
 
   const formattedRollup = prettier.format(transformedRollup, {
     parser: 'typescript',
@@ -158,9 +216,12 @@ async function getCleanedUpRollup(tempDirectory: string) {
   return formattedRollup;
 }
 
-async function applyPostTransforms(inSrc: string): Promise<string> {
+async function applyPostTransforms(
+  inSrc: string,
+  transforms: $ReadOnlyArray<PluginObj<mixed>>,
+): Promise<string> {
   const result = await babel.transformAsync(inSrc, {
-    plugins: ['@babel/plugin-syntax-typescript', ...postTransforms],
+    plugins: ['@babel/plugin-syntax-typescript', ...transforms],
   });
 
   return result.code;

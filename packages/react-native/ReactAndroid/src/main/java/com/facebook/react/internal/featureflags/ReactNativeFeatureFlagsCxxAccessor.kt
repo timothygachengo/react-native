@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<daf78f5249ed27828d8e2fb83d5e5df3>>
+ * @generated SignedSource<<8cb9eb082005be480c39272ffc7dde03>>
  */
 
 /**
@@ -22,7 +22,6 @@ package com.facebook.react.internal.featureflags
 internal class ReactNativeFeatureFlagsCxxAccessor : ReactNativeFeatureFlagsAccessor {
   private var commonTestFlagCache: Boolean? = null
   private var animatedShouldSignalBatchCache: Boolean? = null
-  private var avoidCeilingAvailableAndroidTextWidthCache: Boolean? = null
   private var cxxNativeAnimatedEnabledCache: Boolean? = null
   private var disableMainQueueSyncDispatchIOSCache: Boolean? = null
   private var disableMountItemReorderingAndroidCache: Boolean? = null
@@ -58,14 +57,13 @@ internal class ReactNativeFeatureFlagsCxxAccessor : ReactNativeFeatureFlagsAcces
   private var enableViewRecyclingCache: Boolean? = null
   private var enableViewRecyclingForTextCache: Boolean? = null
   private var enableViewRecyclingForViewCache: Boolean? = null
+  private var enableVirtualViewDebugFeaturesCache: Boolean? = null
   private var fixMappingOfEventPrioritiesBetweenFabricAndReactCache: Boolean? = null
   private var fuseboxEnabledReleaseCache: Boolean? = null
   private var fuseboxNetworkInspectionEnabledCache: Boolean? = null
-  private var incorporateMaxLinesDuringAndroidLayoutCache: Boolean? = null
   private var traceTurboModulePromiseRejectionsOnAndroidCache: Boolean? = null
   private var updateRuntimeShadowNodeReferencesOnCommitCache: Boolean? = null
   private var useAlwaysAvailableJSErrorHandlingCache: Boolean? = null
-  private var useAndroidTextLayoutWidthDirectlyCache: Boolean? = null
   private var useFabricInteropCache: Boolean? = null
   private var useNativeViewConfigsInBridgelessModeCache: Boolean? = null
   private var useOptimizedEventBatchingOnAndroidCache: Boolean? = null
@@ -89,15 +87,6 @@ internal class ReactNativeFeatureFlagsCxxAccessor : ReactNativeFeatureFlagsAcces
     if (cached == null) {
       cached = ReactNativeFeatureFlagsCxxInterop.animatedShouldSignalBatch()
       animatedShouldSignalBatchCache = cached
-    }
-    return cached
-  }
-
-  override fun avoidCeilingAvailableAndroidTextWidth(): Boolean {
-    var cached = avoidCeilingAvailableAndroidTextWidthCache
-    if (cached == null) {
-      cached = ReactNativeFeatureFlagsCxxInterop.avoidCeilingAvailableAndroidTextWidth()
-      avoidCeilingAvailableAndroidTextWidthCache = cached
     }
     return cached
   }
@@ -417,6 +406,15 @@ internal class ReactNativeFeatureFlagsCxxAccessor : ReactNativeFeatureFlagsAcces
     return cached
   }
 
+  override fun enableVirtualViewDebugFeatures(): Boolean {
+    var cached = enableVirtualViewDebugFeaturesCache
+    if (cached == null) {
+      cached = ReactNativeFeatureFlagsCxxInterop.enableVirtualViewDebugFeatures()
+      enableVirtualViewDebugFeaturesCache = cached
+    }
+    return cached
+  }
+
   override fun fixMappingOfEventPrioritiesBetweenFabricAndReact(): Boolean {
     var cached = fixMappingOfEventPrioritiesBetweenFabricAndReactCache
     if (cached == null) {
@@ -444,15 +442,6 @@ internal class ReactNativeFeatureFlagsCxxAccessor : ReactNativeFeatureFlagsAcces
     return cached
   }
 
-  override fun incorporateMaxLinesDuringAndroidLayout(): Boolean {
-    var cached = incorporateMaxLinesDuringAndroidLayoutCache
-    if (cached == null) {
-      cached = ReactNativeFeatureFlagsCxxInterop.incorporateMaxLinesDuringAndroidLayout()
-      incorporateMaxLinesDuringAndroidLayoutCache = cached
-    }
-    return cached
-  }
-
   override fun traceTurboModulePromiseRejectionsOnAndroid(): Boolean {
     var cached = traceTurboModulePromiseRejectionsOnAndroidCache
     if (cached == null) {
@@ -476,15 +465,6 @@ internal class ReactNativeFeatureFlagsCxxAccessor : ReactNativeFeatureFlagsAcces
     if (cached == null) {
       cached = ReactNativeFeatureFlagsCxxInterop.useAlwaysAvailableJSErrorHandling()
       useAlwaysAvailableJSErrorHandlingCache = cached
-    }
-    return cached
-  }
-
-  override fun useAndroidTextLayoutWidthDirectly(): Boolean {
-    var cached = useAndroidTextLayoutWidthDirectlyCache
-    if (cached == null) {
-      cached = ReactNativeFeatureFlagsCxxInterop.useAndroidTextLayoutWidthDirectly()
-      useAndroidTextLayoutWidthDirectlyCache = cached
     }
     return cached
   }

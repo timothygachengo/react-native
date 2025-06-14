@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<dfad04f9ff620686a1619070f8c19efe>>
+ * @generated SignedSource<<25b3585f3648fe156fab4a5abbf32e60>>
  */
 
 /**
@@ -48,11 +48,6 @@ class ReactNativeFeatureFlags {
    * Enables start- and finishOperationBatch on any platform.
    */
   RN_EXPORT static bool animatedShouldSignalBatch();
-
-  /**
-   * Do not incorrectly ceil the available width of an Android text layout
-   */
-  RN_EXPORT static bool avoidCeilingAvailableAndroidTextWidth();
 
   /**
    * Use a C++ implementation of Native Animated instead of the platform implementation.
@@ -230,6 +225,11 @@ class ReactNativeFeatureFlags {
   RN_EXPORT static bool enableViewRecyclingForView();
 
   /**
+   * Enables VirtualView debug features such as logging and overlays.
+   */
+  RN_EXPORT static bool enableVirtualViewDebugFeatures();
+
+  /**
    * Uses the default event priority instead of the discreet event priority by default when dispatching events from Fabric to React.
    */
   RN_EXPORT static bool fixMappingOfEventPrioritiesBetweenFabricAndReact();
@@ -245,11 +245,6 @@ class ReactNativeFeatureFlags {
   RN_EXPORT static bool fuseboxNetworkInspectionEnabled();
 
   /**
-   * Set maxLines and ellipsization during Android layout creation
-   */
-  RN_EXPORT static bool incorporateMaxLinesDuringAndroidLayout();
-
-  /**
    * Enables storing js caller stack when creating promise in native module. This is useful in case of Promise rejection and tracing the cause.
    */
   RN_EXPORT static bool traceTurboModulePromiseRejectionsOnAndroid();
@@ -263,11 +258,6 @@ class ReactNativeFeatureFlags {
    * In Bridgeless mode, use the always available javascript error reporting pipeline.
    */
   RN_EXPORT static bool useAlwaysAvailableJSErrorHandling();
-
-  /**
-   * Trust the width of a text layout we create, instead of re-deriving it from its contents
-   */
-  RN_EXPORT static bool useAndroidTextLayoutWidthDirectly();
 
   /**
    * Should this application enable the Fabric Interop Layer for Android? If yes, the application will behave so that it can accept non-Fabric components and render them on Fabric. This toggle is controlling extra logic such as custom event dispatching that are needed for the Fabric Interop Layer to work correctly.
