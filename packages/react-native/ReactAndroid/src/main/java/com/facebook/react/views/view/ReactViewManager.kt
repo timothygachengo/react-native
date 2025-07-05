@@ -9,7 +9,6 @@ package com.facebook.react.views.view
 
 import android.graphics.Rect
 import android.view.View
-import android.view.View.OnFocusChangeListener
 import com.facebook.common.logging.FLog
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.DynamicFromObject
@@ -26,6 +25,7 @@ import com.facebook.react.uimanager.LengthPercentage
 import com.facebook.react.uimanager.LengthPercentageType
 import com.facebook.react.uimanager.PixelUtil.dpToPx
 import com.facebook.react.uimanager.PointerEvents
+import com.facebook.react.uimanager.ReactAxOrderHelper
 import com.facebook.react.uimanager.Spacing
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -34,8 +34,6 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.uimanager.annotations.ReactPropGroup
 import com.facebook.react.uimanager.common.UIManagerType
 import com.facebook.react.uimanager.common.ViewUtil
-import com.facebook.react.uimanager.events.BlurEvent
-import com.facebook.react.uimanager.events.FocusEvent
 import com.facebook.react.uimanager.style.BackgroundImageLayer
 import com.facebook.react.uimanager.style.BorderRadiusProp
 import com.facebook.react.uimanager.style.BorderStyle
@@ -86,9 +84,39 @@ public open class ReactViewManager : ReactClippingViewManager<ReactViewGroup>() 
     return preparedView
   }
 
+  override fun onDropViewInstance(view: ReactViewGroup) {
+    super.onDropViewInstance(view)
+    view.cleanUpAxOrderListener()
+  }
+
   @ReactProp(name = "accessible")
   public open fun setAccessible(view: ReactViewGroup, accessible: Boolean) {
     view.isFocusable = accessible
+  }
+
+  @ReactProp(name = ViewProps.ACCESSIBILITY_ORDER)
+  public open fun setAccessibilityOrder(view: ReactViewGroup, nativeIds: ReadableArray?) {
+    if (!ReactNativeFeatureFlags.enableAccessibilityOrder()) {
+      return
+    }
+
+    ReactAxOrderHelper.cleanUpAxOrder(view)
+
+    if (nativeIds == null) {
+      view.axOrderList = null
+      return
+    }
+
+    val axOrderList = mutableListOf<String>()
+
+    for (i in 0 until nativeIds.size()) {
+      val id = nativeIds.getString(i)
+      if (id != null) {
+        axOrderList.add(id)
+      }
+    }
+
+    view.axOrderList = axOrderList
   }
 
   @ReactProp(name = "hasTVPreferredFocus")
@@ -344,40 +372,6 @@ public open class ReactViewManager : ReactClippingViewManager<ReactViewGroup>() 
 
   public override fun createViewInstance(context: ThemedReactContext): ReactViewGroup =
       ReactViewGroup(context)
-
-  override fun getExportedCustomBubblingEventTypeConstants(): Map<String, Any> {
-    val baseEventTypeConstants = super.getExportedCustomBubblingEventTypeConstants()
-    val eventTypeConstants = baseEventTypeConstants ?: mutableMapOf()
-    eventTypeConstants.putAll(
-        mapOf(
-            FocusEvent.EVENT_NAME to
-                mapOf(
-                    "phasedRegistrationNames" to
-                        mapOf("bubbled" to "onFocus", "captured" to "onFocusCapture")),
-            BlurEvent.EVENT_NAME to
-                mapOf(
-                    "phasedRegistrationNames" to
-                        mapOf("bubbled" to "onBlur", "captured" to "onBlurCapture")),
-        ))
-    return eventTypeConstants
-  }
-
-  override fun addEventEmitters(reactContext: ThemedReactContext, view: ReactViewGroup) {
-    view.onFocusChangeListener = OnFocusChangeListener { _: View?, hasFocus: Boolean ->
-      val surfaceId = UIManagerHelper.getSurfaceId(view.context)
-      if (surfaceId == View.NO_ID) {
-        return@OnFocusChangeListener
-      }
-      val eventDispatcher =
-          UIManagerHelper.getEventDispatcherForReactTag((view.context as ReactContext), view.id)
-              ?: return@OnFocusChangeListener
-      if (hasFocus) {
-        eventDispatcher.dispatchEvent(FocusEvent(surfaceId, view.id))
-      } else {
-        eventDispatcher.dispatchEvent(BlurEvent(surfaceId, view.id))
-      }
-    }
-  }
 
   override fun getCommandsMap(): MutableMap<String, Int> =
       mutableMapOf(HOTSPOT_UPDATE_KEY to CMD_HOTSPOT_UPDATE, "setPressed" to CMD_SET_PRESSED)

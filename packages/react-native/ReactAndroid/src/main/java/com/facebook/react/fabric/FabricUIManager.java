@@ -22,7 +22,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.SystemClock;
-import android.text.Layout;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import androidx.annotation.AnyThread;
@@ -51,7 +50,6 @@ import com.facebook.react.bridge.UIManager;
 import com.facebook.react.bridge.UIManagerListener;
 import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.common.ReactConstants;
 import com.facebook.react.common.annotations.UnstableReactNativeAPI;
 import com.facebook.react.common.build.ReactBuildConfig;
 import com.facebook.react.common.mapbuffer.ReadableMapBuffer;
@@ -81,6 +79,7 @@ import com.facebook.react.uimanager.RootViewUtil;
 import com.facebook.react.uimanager.StateWrapper;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.UIManagerHelper;
+import com.facebook.react.uimanager.ViewManager;
 import com.facebook.react.uimanager.ViewManagerPropertyUpdater;
 import com.facebook.react.uimanager.ViewManagerRegistry;
 import com.facebook.react.uimanager.events.BatchEventDispatchedListener;
@@ -90,6 +89,8 @@ import com.facebook.react.uimanager.events.FabricEventDispatcher;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.facebook.react.uimanager.events.SynchronousEventReceiver;
 import com.facebook.react.views.text.PreparedLayout;
+import com.facebook.react.views.text.ReactTextViewManager;
+import com.facebook.react.views.text.ReactTextViewManagerCallback;
 import com.facebook.react.views.text.TextLayoutManager;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -364,7 +365,10 @@ public class FabricUIManager
       final SurfaceHandlerBinding surfaceHandler,
       final Context context,
       final @Nullable View rootView) {
-    final int rootTag = ReactRootViewTagGenerator.getNextRootViewTag();
+    final int rootTag =
+        rootView instanceof ReactRoot
+            ? ((ReactRoot) rootView).getRootViewTag()
+            : ReactRootViewTagGenerator.getNextRootViewTag();
 
     ThemedReactContext reactContext =
         new ThemedReactContext(
@@ -526,40 +530,20 @@ public class FabricUIManager
       ReadableMapBuffer paragraphAttributes,
       float width,
       float height) {
+    ViewManager textViewManager = mViewManagerRegistry.get(ReactTextViewManager.REACT_CLASS);
+
     return (NativeArray)
         TextLayoutManager.measureLines(
             mReactApplicationContext,
             attributedString,
             paragraphAttributes,
             PixelUtil.toPixelFromDIP(width),
-            PixelUtil.toPixelFromDIP(height));
+            PixelUtil.toPixelFromDIP(height),
+            textViewManager instanceof ReactTextViewManagerCallback
+                ? (ReactTextViewManagerCallback) textViewManager
+                : null);
   }
 
-  @SuppressWarnings("unused")
-  private long measure(
-      int rootTag,
-      String componentName,
-      ReadableMap localData,
-      ReadableMap props,
-      ReadableMap state,
-      float minWidth,
-      float maxWidth,
-      float minHeight,
-      float maxHeight) {
-    return measure(
-        rootTag,
-        componentName,
-        localData,
-        props,
-        state,
-        minWidth,
-        maxWidth,
-        minHeight,
-        maxHeight,
-        null);
-  }
-
-  @SuppressWarnings("unused")
   public int getColor(int surfaceId, String[] resourcePaths) {
     ThemedReactContext context =
         mMountingManager.getSurfaceManagerEnforced(surfaceId, "getColor").getContext();
@@ -577,8 +561,13 @@ public class FabricUIManager
     return 0;
   }
 
-  @SuppressWarnings("unused")
-  private long measure(
+  /**
+   * Calls the measure() function on a specific view manager. This may be used for implementing
+   * custom Fabric ShadowNodes
+   */
+  @AnyThread
+  @ThreadConfined(ANY)
+  public long measure(
       int surfaceId,
       String componentName,
       ReadableMap localData,
@@ -587,9 +576,7 @@ public class FabricUIManager
       float minWidth,
       float maxWidth,
       float minHeight,
-      float maxHeight,
-      @Nullable float[] attachmentsPositions) {
-
+      float maxHeight) {
     ReactContext context;
     if (surfaceId > 0) {
       SurfaceMountingManager surfaceMountingManager =
@@ -614,16 +601,16 @@ public class FabricUIManager
         getYogaMeasureMode(minWidth, maxWidth),
         getYogaSize(minHeight, maxHeight),
         getYogaMeasureMode(minHeight, maxHeight),
-        attachmentsPositions);
+        null);
   }
 
-  @SuppressWarnings("unused")
-  private long measureMapBuffer(
+  @AnyThread
+  @ThreadConfined(ANY)
+  @UnstableReactNativeAPI
+  public long measureText(
       int surfaceId,
-      String componentName,
-      ReadableMapBuffer localData,
-      ReadableMapBuffer props,
-      @Nullable ReadableMapBuffer state,
+      ReadableMapBuffer attributedString,
+      ReadableMapBuffer paragraphAttributes,
       float minWidth,
       float maxWidth,
       float minHeight,
@@ -633,7 +620,7 @@ public class FabricUIManager
     ReactContext context;
     if (surfaceId > 0) {
       SurfaceMountingManager surfaceMountingManager =
-          mMountingManager.getSurfaceManagerEnforced(surfaceId, "measure");
+          mMountingManager.getSurfaceManagerEnforced(surfaceId, "measureText");
       if (surfaceMountingManager.isStopped()) {
         return 0;
       }
@@ -644,24 +631,26 @@ public class FabricUIManager
       context = mReactApplicationContext;
     }
 
-    // TODO: replace ReadableNativeMap -> ReadableMapBuffer
-    return mMountingManager.measureMapBuffer(
+    ViewManager textViewManager = mViewManagerRegistry.get(ReactTextViewManager.REACT_CLASS);
+
+    return TextLayoutManager.measureText(
         context,
-        componentName,
-        localData,
-        props,
-        state,
+        attributedString,
+        paragraphAttributes,
         getYogaSize(minWidth, maxWidth),
         getYogaMeasureMode(minWidth, maxWidth),
         getYogaSize(minHeight, maxHeight),
         getYogaMeasureMode(minHeight, maxHeight),
+        textViewManager instanceof ReactTextViewManagerCallback
+            ? (ReactTextViewManagerCallback) textViewManager
+            : null,
         attachmentsPositions);
   }
 
   @AnyThread
   @ThreadConfined(ANY)
   @UnstableReactNativeAPI
-  public PreparedLayout prepareLayout(
+  public PreparedLayout prepareTextLayout(
       int surfaceId,
       ReadableMapBuffer attributedString,
       ReadableMapBuffer paragraphAttributes,
@@ -670,24 +659,20 @@ public class FabricUIManager
       float minHeight,
       float maxHeight) {
     SurfaceMountingManager surfaceMountingManager =
-        mMountingManager.getSurfaceManagerEnforced(surfaceId, "prepareLayout");
-    Layout layout =
-        TextLayoutManager.createLayout(
-            Preconditions.checkNotNull(surfaceMountingManager.getContext()),
-            attributedString,
-            paragraphAttributes,
-            getYogaSize(minWidth, maxWidth),
-            getYogaMeasureMode(minWidth, maxWidth),
-            getYogaSize(minHeight, maxHeight),
-            getYogaMeasureMode(minHeight, maxHeight),
-            null /* T219881133: Migrate away from ReactTextViewManagerCallback */);
+        mMountingManager.getSurfaceManagerEnforced(surfaceId, "prepareTextLayout");
+    ViewManager textViewManager = mViewManagerRegistry.get(ReactTextViewManager.REACT_CLASS);
 
-    int maximumNumberOfLines =
-        paragraphAttributes.contains(TextLayoutManager.PA_KEY_MAX_NUMBER_OF_LINES)
-            ? paragraphAttributes.getInt(TextLayoutManager.PA_KEY_MAX_NUMBER_OF_LINES)
-            : ReactConstants.UNSET;
-
-    return new PreparedLayout(layout, maximumNumberOfLines);
+    return TextLayoutManager.createPreparedLayout(
+        Preconditions.checkNotNull(surfaceMountingManager.getContext()),
+        attributedString,
+        paragraphAttributes,
+        getYogaSize(minWidth, maxWidth),
+        getYogaMeasureMode(minWidth, maxWidth),
+        getYogaSize(minHeight, maxHeight),
+        getYogaMeasureMode(minHeight, maxHeight),
+        textViewManager instanceof ReactTextViewManagerCallback
+            ? (ReactTextViewManagerCallback) textViewManager
+            : null);
   }
 
   @AnyThread
@@ -1337,7 +1322,7 @@ public class FabricUIManager
     @UiThread
     @ThreadConfined(UI)
     @Override
-    public void willMountItems(@Nullable List<MountItem> mountItems) {
+    public void willMountItems(@Nullable List<? extends MountItem> mountItems) {
       for (UIManagerListener listener : mListeners) {
         listener.willMountItems(FabricUIManager.this);
       }
@@ -1346,7 +1331,7 @@ public class FabricUIManager
     @UiThread
     @ThreadConfined(UI)
     @Override
-    public void didMountItems(@Nullable List<MountItem> mountItems) {
+    public void didMountItems(@Nullable List<? extends MountItem> mountItems) {
       for (UIManagerListener listener : mListeners) {
         listener.didMountItems(FabricUIManager.this);
       }

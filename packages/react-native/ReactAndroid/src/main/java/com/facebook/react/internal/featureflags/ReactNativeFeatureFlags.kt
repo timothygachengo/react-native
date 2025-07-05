@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<7484b716c0cb8d12d307e3b34767e559>>
+ * @generated SignedSource<<a4a7c66f4603fc6a56018aba12c942ee>>
  */
 
 /**
@@ -43,16 +43,16 @@ public object ReactNativeFeatureFlags {
   public fun animatedShouldSignalBatch(): Boolean = accessor.animatedShouldSignalBatch()
 
   /**
-   * Do not incorrectly ceil the available width of an Android text layout
-   */
-  @JvmStatic
-  public fun avoidCeilingAvailableAndroidTextWidth(): Boolean = accessor.avoidCeilingAvailableAndroidTextWidth()
-
-  /**
    * Use a C++ implementation of Native Animated instead of the platform implementation.
    */
   @JvmStatic
   public fun cxxNativeAnimatedEnabled(): Boolean = accessor.cxxNativeAnimatedEnabled()
+
+  /**
+   * Removes JS sync at end of native animation
+   */
+  @JvmStatic
+  public fun cxxNativeAnimatedRemoveJsSync(): Boolean = accessor.cxxNativeAnimatedRemoveJsSync()
 
   /**
    * Disable sync dispatch on the main queue on iOS
@@ -83,6 +83,12 @@ public object ReactNativeFeatureFlags {
    */
   @JvmStatic
   public fun enableAccumulatedUpdatesInRawPropsAndroid(): Boolean = accessor.enableAccumulatedUpdatesInRawPropsAndroid()
+
+  /**
+   * Enables various optimizations throughout the path of measuring text on Android.
+   */
+  @JvmStatic
+  public fun enableAndroidTextMeasurementOptimizations(): Boolean = accessor.enableAndroidTextMeasurementOptimizations()
 
   /**
    * Feature flag to enable the new bridgeless architecture. Note: Enabling this will force enable the following flags: `useTurboModules` & `enableFabricRenderer`.
@@ -157,10 +163,10 @@ public object ReactNativeFeatureFlags {
   public fun enableIOSViewClipToPaddingBox(): Boolean = accessor.enableIOSViewClipToPaddingBox()
 
   /**
-   * Integrates IntersectionObserver in the Event Loop in the new architecture, to dispatch the initial notifications for observations in the "Update the rendering" step.
+   * This is to fix the issue with interop view manager where component descriptor lookup is causing ViewManager to preload.
    */
   @JvmStatic
-  public fun enableIntersectionObserverEventLoopIntegration(): Boolean = accessor.enableIntersectionObserverEventLoopIntegration()
+  public fun enableInteropViewManagerClassLookUpOptimizationIOS(): Boolean = accessor.enableInteropViewManagerClassLookUpOptimizationIOS()
 
   /**
    * When enabled, LayoutAnimations API will animate state changes on Android.
@@ -259,6 +265,24 @@ public object ReactNativeFeatureFlags {
   public fun enableViewRecyclingForView(): Boolean = accessor.enableViewRecyclingForView()
 
   /**
+   * Enables VirtualView debug features such as logging and overlays.
+   */
+  @JvmStatic
+  public fun enableVirtualViewDebugFeatures(): Boolean = accessor.enableVirtualViewDebugFeatures()
+
+  /**
+   * Enables reading render state when dispatching VirtualView events.
+   */
+  @JvmStatic
+  public fun enableVirtualViewRenderState(): Boolean = accessor.enableVirtualViewRenderState()
+
+  /**
+   * Enables window focus detection for prioritizing VirtualView events.
+   */
+  @JvmStatic
+  public fun enableVirtualViewWindowFocusDetection(): Boolean = accessor.enableVirtualViewWindowFocusDetection()
+
+  /**
    * Uses the default event priority instead of the discreet event priority by default when dispatching events from Fabric to React.
    */
   @JvmStatic
@@ -277,10 +301,16 @@ public object ReactNativeFeatureFlags {
   public fun fuseboxNetworkInspectionEnabled(): Boolean = accessor.fuseboxNetworkInspectionEnabled()
 
   /**
-   * Set maxLines and ellipsization during Android layout creation
+   * Hides offscreen VirtualViews on iOS by setting hidden = YES to avoid extra cost of views
    */
   @JvmStatic
-  public fun incorporateMaxLinesDuringAndroidLayout(): Boolean = accessor.incorporateMaxLinesDuringAndroidLayout()
+  public fun hideOffscreenVirtualViewsOnIOS(): Boolean = accessor.hideOffscreenVirtualViewsOnIOS()
+
+  /**
+   * Number cached PreparedLayouts in TextLayoutManager cache
+   */
+  @JvmStatic
+  public fun preparedTextCacheSize(): Double = accessor.preparedTextCacheSize()
 
   /**
    * Enables storing js caller stack when creating promise in native module. This is useful in case of Promise rejection and tracing the cause.
@@ -299,12 +329,6 @@ public object ReactNativeFeatureFlags {
    */
   @JvmStatic
   public fun useAlwaysAvailableJSErrorHandling(): Boolean = accessor.useAlwaysAvailableJSErrorHandling()
-
-  /**
-   * Trust the width of a text layout we create, instead of re-deriving it from its contents
-   */
-  @JvmStatic
-  public fun useAndroidTextLayoutWidthDirectly(): Boolean = accessor.useAndroidTextLayoutWidthDirectly()
 
   /**
    * Should this application enable the Fabric Interop Layer for Android? If yes, the application will behave so that it can accept non-Fabric components and render them on Fabric. This toggle is controlling extra logic such as custom event dispatching that are needed for the Fabric Interop Layer to work correctly.

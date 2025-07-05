@@ -70,22 +70,22 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
-    avoidCeilingAvailableAndroidTextWidth: {
-      defaultValue: true,
-      metadata: {
-        description:
-          'Do not incorrectly ceil the available width of an Android text layout',
-        expectedReleaseValue: true,
-        purpose: 'release',
-      },
-      ossReleaseStage: 'stable',
-    },
     cxxNativeAnimatedEnabled: {
       defaultValue: false,
       metadata: {
         dateAdded: '2025-03-14',
         description:
           'Use a C++ implementation of Native Animated instead of the platform implementation.',
+        expectedReleaseValue: true,
+        purpose: 'experimentation',
+      },
+      ossReleaseStage: 'none',
+    },
+    cxxNativeAnimatedRemoveJsSync: {
+      defaultValue: false,
+      metadata: {
+        dateAdded: '2025-06-16',
+        description: 'Removes JS sync at end of native animation',
         expectedReleaseValue: true,
         purpose: 'experimentation',
       },
@@ -140,6 +140,17 @@ const definitions: FeatureFlagDefinitions = {
         dateAdded: '2024-12-10',
         description:
           'When enabled, Android will accumulate updates in rawProps to reduce the number of mounting instructions for cascading re-renders.',
+        expectedReleaseValue: true,
+        purpose: 'experimentation',
+      },
+      ossReleaseStage: 'none',
+    },
+    enableAndroidTextMeasurementOptimizations: {
+      defaultValue: false,
+      metadata: {
+        dateAdded: '2025-07-01',
+        description:
+          'Enables various optimizations throughout the path of measuring text on Android.',
         expectedReleaseValue: true,
         purpose: 'experimentation',
       },
@@ -269,12 +280,12 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
-    enableIntersectionObserverEventLoopIntegration: {
-      defaultValue: true,
+    enableInteropViewManagerClassLookUpOptimizationIOS: {
+      defaultValue: false,
       metadata: {
-        dateAdded: '2025-04-16',
+        dateAdded: '2025-06-17',
         description:
-          'Integrates IntersectionObserver in the Event Loop in the new architecture, to dispatch the initial notifications for observations in the "Update the rendering" step.',
+          'This is to fix the issue with interop view manager where component descriptor lookup is causing ViewManager to preload.',
         expectedReleaseValue: true,
         purpose: 'experimentation',
       },
@@ -449,6 +460,36 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
+    enableVirtualViewDebugFeatures: {
+      defaultValue: false,
+      metadata: {
+        description:
+          'Enables VirtualView debug features such as logging and overlays.',
+        expectedReleaseValue: false,
+        purpose: 'operational',
+      },
+      ossReleaseStage: 'none',
+    },
+    enableVirtualViewRenderState: {
+      defaultValue: false,
+      metadata: {
+        description:
+          'Enables reading render state when dispatching VirtualView events.',
+        expectedReleaseValue: true,
+        purpose: 'operational',
+      },
+      ossReleaseStage: 'none',
+    },
+    enableVirtualViewWindowFocusDetection: {
+      defaultValue: false,
+      metadata: {
+        description:
+          'Enables window focus detection for prioritizing VirtualView events.',
+        expectedReleaseValue: true,
+        purpose: 'operational',
+      },
+      ossReleaseStage: 'none',
+    },
     fixMappingOfEventPrioritiesBetweenFabricAndReact: {
       defaultValue: false,
       metadata: {
@@ -481,15 +522,26 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
-    incorporateMaxLinesDuringAndroidLayout: {
-      defaultValue: true,
+    hideOffscreenVirtualViewsOnIOS: {
+      defaultValue: false,
       metadata: {
+        dateAdded: '2025-06-30',
         description:
-          'Set maxLines and ellipsization during Android layout creation',
+          'Hides offscreen VirtualViews on iOS by setting hidden = YES to avoid extra cost of views',
         expectedReleaseValue: true,
-        purpose: 'release',
+        purpose: 'experimentation',
       },
-      ossReleaseStage: 'stable',
+      ossReleaseStage: 'none',
+    },
+    preparedTextCacheSize: {
+      defaultValue: 200,
+      metadata: {
+        dateAdded: '2025-06-25',
+        description: 'Number cached PreparedLayouts in TextLayoutManager cache',
+        expectedReleaseValue: 200,
+        purpose: 'experimentation',
+      },
+      ossReleaseStage: 'none',
     },
     traceTurboModulePromiseRejectionsOnAndroid: {
       defaultValue: false,
@@ -521,16 +573,6 @@ const definitions: FeatureFlagDefinitions = {
         purpose: 'release',
       },
       ossReleaseStage: 'none',
-    },
-    useAndroidTextLayoutWidthDirectly: {
-      defaultValue: true,
-      metadata: {
-        description:
-          'Trust the width of a text layout we create, instead of re-deriving it from its contents',
-        expectedReleaseValue: true,
-        purpose: 'release',
-      },
-      ossReleaseStage: 'stable',
     },
     useFabricInterop: {
       defaultValue: true,
@@ -664,6 +706,17 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
+    deferFlatListFocusChangeRenderUpdate: {
+      defaultValue: false,
+      metadata: {
+        dateAdded: '2025-07-02',
+        description:
+          'Use the deferred cell render update mechanism for focus change in FlatList.',
+        expectedReleaseValue: true,
+        purpose: 'experimentation',
+      },
+      ossReleaseStage: 'none',
+    },
     disableInteractionManager: {
       defaultValue: true,
       metadata: {
@@ -681,16 +734,6 @@ const definitions: FeatureFlagDefinitions = {
           'Enables access to the host tree in Fabric using DOM-compatible APIs.',
         expectedReleaseValue: true,
         purpose: 'release',
-      },
-      ossReleaseStage: 'none',
-    },
-    enableVirtualViewDebugFeatures: {
-      defaultValue: false,
-      metadata: {
-        description:
-          'Enables VirtualView debug features such as logging and overlays.',
-        expectedReleaseValue: false,
-        purpose: 'operational',
       },
       ossReleaseStage: 'none',
     },

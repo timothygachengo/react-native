@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
+ * @noflow
  */
 
 'use strict';
@@ -14,8 +15,9 @@ const lazyImports = require('./lazy-imports');
 
 const EXCLUDED_FIRST_PARTY_PATHS = [
   /[/\\]node_modules[/\\]/,
-  /[/\\]packages[/\\]react-native(?:-fantom)?[/\\]/,
+  /[/\\]packages[/\\]react-native[/\\]/,
   /[/\\]packages[/\\]virtualized-lists[/\\]/,
+  /[/\\]private[/\\]react-native-fantom[/\\]/,
 ];
 
 function isTypeScriptSource(fileName) {

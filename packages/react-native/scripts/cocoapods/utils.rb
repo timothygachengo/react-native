@@ -6,6 +6,7 @@
 require 'shellwords'
 
 require_relative "./helpers.rb"
+require_relative "./jsengine.rb"
 
 # Utilities class for React Native Cocoapods
 class ReactNativePodsUtils
@@ -32,7 +33,7 @@ class ReactNativePodsUtils
             flags[:hermes_enabled] = true
         end
 
-        if ENV['USE_HERMES'] == '0'
+        if !use_hermes()
             flags[:hermes_enabled] = false
         end
 
@@ -175,27 +176,6 @@ class ReactNativePodsUtils
             end
             aggregate_target.user_project.save()
         end
-    end
-
-    def self.apply_xcode_15_patch(installer, xcodebuild_manager: Xcodebuild)
-        projects = self.extract_projects(installer)
-
-        other_ld_flags_key = 'OTHER_LDFLAGS'
-        xcode15_compatibility_flags = '-Wl -ld_classic '
-
-        projects.each do |project|
-            project.build_configurations.each do |config|
-                # fix for weak linking
-                self.safe_init(config, other_ld_flags_key)
-                if self.is_using_xcode15_0(:xcodebuild_manager => xcodebuild_manager)
-                    self.add_value_to_setting_if_missing(config, other_ld_flags_key, xcode15_compatibility_flags)
-                else
-                    self.remove_value_from_setting_if_present(config, other_ld_flags_key, xcode15_compatibility_flags)
-                end
-            end
-            project.save()
-        end
-
     end
 
     private
@@ -421,16 +401,6 @@ class ReactNativePodsUtils
             new_config = old_config.gsub(trimmed_value,  "")
             config.build_settings[setting_name] = new_config.strip()
         end
-    end
-
-    def self.is_using_xcode15_0(xcodebuild_manager: Xcodebuild)
-        xcodebuild_version = xcodebuild_manager.version
-
-        if version = self.parse_xcode_version(xcodebuild_version)
-            return version["major"] == 15 && version["minor"] == 0
-        end
-
-        return false
     end
 
     def self.parse_xcode_version(version_string)

@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
+ * @noflow
  */
 
 'use strict';
@@ -30,6 +31,8 @@ eslintTester.run('../no-deep-imports', rule, {
     "import Foo from 'react/native/Foo';",
     "import 'react-native/Libraries/Core/InitializeCore';",
     "require('react-native/Libraries/Core/InitializeCore');",
+    "import Foo from 'react-native/src/fb_internal/Foo'",
+    "require('react-native/src/fb_internal/Foo')",
   ],
   invalid: [
     {
@@ -98,6 +101,26 @@ eslintTester.run('../no-deep-imports', rule, {
         {
           messageId: 'deepImport',
           data: {importPath: 'react-native/Libraries/Foo'},
+        },
+      ],
+      output: null,
+    },
+    {
+      code: "import type {RootTag} from 'react-native/Libraries/Types/RootTagTypes';",
+      errors: [
+        {
+          messageId: 'deepImport',
+          data: {importPath: 'react-native/Libraries/Types/RootTagTypes'},
+        },
+      ],
+      output: "import type {RootTag} from 'react-native';",
+    },
+    {
+      code: "import type {ModalBaseProps, Foo} from 'react-native/Libraries/Modal/Modal';",
+      errors: [
+        {
+          messageId: 'deepImport',
+          data: {importPath: 'react-native/Libraries/Modal/Modal'},
         },
       ],
       output: null,

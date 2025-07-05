@@ -11,15 +11,10 @@
 import type {ViewProps} from './ViewPropTypes';
 
 import * as ReactNativeFeatureFlags from '../../../src/private/featureflags/ReactNativeFeatureFlags';
-import TextAncestor from '../../Text/TextAncestor';
+import TextAncestorContext from '../../Text/TextAncestorContext';
 import ViewNativeComponent from './ViewNativeComponent';
 import * as React from 'react';
 import {use} from 'react';
-
-type PropsWithRef = $ReadOnly<{
-  ref?: React.RefSetter<React.ElementRef<typeof ViewNativeComponent>>,
-  ...ViewProps,
-}>;
 
 /**
  * The most fundamental component for building a UI, View is a container that
@@ -28,8 +23,11 @@ type PropsWithRef = $ReadOnly<{
  *
  * @see https://reactnative.dev/docs/view
  */
-function View(props: PropsWithRef): React.Node {
-  const hasTextAncestor = use(TextAncestor);
+export default component View(
+  ref?: React.RefSetter<React.ElementRef<typeof ViewNativeComponent>>,
+  ...props: ViewProps
+) {
+  const hasTextAncestor = use(TextAncestorContext);
 
   let actualView;
   if (ReactNativeFeatureFlags.reduceDefaultPropsInView()) {
@@ -55,7 +53,7 @@ function View(props: PropsWithRef): React.Node {
     } = props;
 
     // Since we destructured props, we can now treat it as mutable
-    const processedProps = otherProps as {...PropsWithRef};
+    const processedProps = otherProps as {...ViewProps};
 
     const parsedAriaLabelledBy = ariaLabelledBy?.split(/\s*,\s*/g);
     if (parsedAriaLabelledBy !== undefined) {
@@ -118,7 +116,12 @@ function View(props: PropsWithRef): React.Node {
       };
     }
 
-    actualView = <ViewNativeComponent {...processedProps} />;
+    actualView =
+      ref == null ? (
+        <ViewNativeComponent {...processedProps} />
+      ) : (
+        <ViewNativeComponent {...processedProps} ref={ref} />
+      );
   } else {
     const {
       accessibilityElementsHidden,
@@ -198,17 +201,15 @@ function View(props: PropsWithRef): React.Node {
             : importantForAccessibility
         }
         nativeID={id ?? nativeID}
+        ref={ref}
       />
     );
   }
 
   if (hasTextAncestor) {
-    return <TextAncestor value={false}>{actualView}</TextAncestor>;
+    return (
+      <TextAncestorContext value={false}>{actualView}</TextAncestorContext>
+    );
   }
   return actualView;
 }
-
-export default View as component(
-  ref?: React.RefSetter<React.ElementRef<typeof ViewNativeComponent>>,
-  ...props: ViewProps
-);

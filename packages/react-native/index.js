@@ -83,7 +83,18 @@ module.exports = {
     return require('./Libraries/Components/RefreshControl/RefreshControl')
       .default;
   },
+  /**
+   * @deprecated SafeAreaView has been deprecated and will be removed in a future release.
+   * Please use 'react-native-safe-area-context' instead.
+   * See https://github.com/th3rdwave/react-native-safe-area-context
+   */
   get SafeAreaView() {
+    warnOnce(
+      'safe-area-view-deprecated',
+      'SafeAreaView has been deprecated and will be removed in a future release. ' +
+        "Please use 'react-native-safe-area-context' instead. " +
+        'See https://github.com/th3rdwave/react-native-safe-area-context',
+    );
     return require('./Libraries/Components/SafeAreaView/SafeAreaView').default;
   },
   get ScrollView() {
@@ -100,6 +111,9 @@ module.exports = {
   },
   get Text() {
     return require('./Libraries/Text/Text').default;
+  },
+  get unstable_TextAncestorContext() {
+    return require('./Libraries/Text/TextAncestorContext').default;
   },
   get TextInput() {
     return require('./Libraries/Components/TextInput/TextInput').default;
@@ -130,6 +144,9 @@ module.exports = {
   },
   get VirtualizedSectionList() {
     return require('./Libraries/Lists/VirtualizedSectionList').default;
+  },
+  get unstable_VirtualView() {
+    return require('./src/private/components/virtualview/VirtualView').default;
   },
   // #endregion
   // #region APIs
@@ -314,6 +331,10 @@ module.exports = {
   },
   get Vibration() {
     return require('./Libraries/Vibration/Vibration').default;
+  },
+  get VirtualViewMode() {
+    return require('./src/private/components/virtualview/VirtualView')
+      .VirtualViewMode;
   },
   // #endregion
 } as ReactNativePublicAPI;

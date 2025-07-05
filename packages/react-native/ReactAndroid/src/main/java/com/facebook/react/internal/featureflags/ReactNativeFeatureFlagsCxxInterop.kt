@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<1261be706a0da435a217a88faed53015>>
+ * @generated SignedSource<<75760457dea789ab0951d3a22be3341c>>
  */
 
 /**
@@ -32,9 +32,9 @@ public object ReactNativeFeatureFlagsCxxInterop {
 
   @DoNotStrip @JvmStatic public external fun animatedShouldSignalBatch(): Boolean
 
-  @DoNotStrip @JvmStatic public external fun avoidCeilingAvailableAndroidTextWidth(): Boolean
-
   @DoNotStrip @JvmStatic public external fun cxxNativeAnimatedEnabled(): Boolean
+
+  @DoNotStrip @JvmStatic public external fun cxxNativeAnimatedRemoveJsSync(): Boolean
 
   @DoNotStrip @JvmStatic public external fun disableMainQueueSyncDispatchIOS(): Boolean
 
@@ -45,6 +45,8 @@ public object ReactNativeFeatureFlagsCxxInterop {
   @DoNotStrip @JvmStatic public external fun enableAccessibilityOrder(): Boolean
 
   @DoNotStrip @JvmStatic public external fun enableAccumulatedUpdatesInRawPropsAndroid(): Boolean
+
+  @DoNotStrip @JvmStatic public external fun enableAndroidTextMeasurementOptimizations(): Boolean
 
   @DoNotStrip @JvmStatic public external fun enableBridgelessArchitecture(): Boolean
 
@@ -70,7 +72,7 @@ public object ReactNativeFeatureFlagsCxxInterop {
 
   @DoNotStrip @JvmStatic public external fun enableIOSViewClipToPaddingBox(): Boolean
 
-  @DoNotStrip @JvmStatic public external fun enableIntersectionObserverEventLoopIntegration(): Boolean
+  @DoNotStrip @JvmStatic public external fun enableInteropViewManagerClassLookUpOptimizationIOS(): Boolean
 
   @DoNotStrip @JvmStatic public external fun enableLayoutAnimationsOnAndroid(): Boolean
 
@@ -104,21 +106,27 @@ public object ReactNativeFeatureFlagsCxxInterop {
 
   @DoNotStrip @JvmStatic public external fun enableViewRecyclingForView(): Boolean
 
+  @DoNotStrip @JvmStatic public external fun enableVirtualViewDebugFeatures(): Boolean
+
+  @DoNotStrip @JvmStatic public external fun enableVirtualViewRenderState(): Boolean
+
+  @DoNotStrip @JvmStatic public external fun enableVirtualViewWindowFocusDetection(): Boolean
+
   @DoNotStrip @JvmStatic public external fun fixMappingOfEventPrioritiesBetweenFabricAndReact(): Boolean
 
   @DoNotStrip @JvmStatic public external fun fuseboxEnabledRelease(): Boolean
 
   @DoNotStrip @JvmStatic public external fun fuseboxNetworkInspectionEnabled(): Boolean
 
-  @DoNotStrip @JvmStatic public external fun incorporateMaxLinesDuringAndroidLayout(): Boolean
+  @DoNotStrip @JvmStatic public external fun hideOffscreenVirtualViewsOnIOS(): Boolean
+
+  @DoNotStrip @JvmStatic public external fun preparedTextCacheSize(): Double
 
   @DoNotStrip @JvmStatic public external fun traceTurboModulePromiseRejectionsOnAndroid(): Boolean
 
   @DoNotStrip @JvmStatic public external fun updateRuntimeShadowNodeReferencesOnCommit(): Boolean
 
   @DoNotStrip @JvmStatic public external fun useAlwaysAvailableJSErrorHandling(): Boolean
-
-  @DoNotStrip @JvmStatic public external fun useAndroidTextLayoutWidthDirectly(): Boolean
 
   @DoNotStrip @JvmStatic public external fun useFabricInterop(): Boolean
 
