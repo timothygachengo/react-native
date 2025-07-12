@@ -24,6 +24,8 @@
 #include <react/renderer/components/text/TextComponentDescriptor.h>
 #include <react/renderer/components/view/LayoutConformanceComponentDescriptor.h>
 #include <react/renderer/components/view/ViewComponentDescriptor.h>
+#include <react/renderer/components/virtualview/VirtualViewComponentDescriptor.h>
+#include <react/renderer/components/virtualviewexperimental/VirtualViewExperimentalComponentDescriptor.h>
 
 namespace facebook::react::CoreComponentsRegistry {
 
@@ -69,6 +71,10 @@ sharedProviderRegistry() {
                           DebuggingOverlayComponentDescriptor>());
     providerRegistry->add(concreteComponentDescriptorProvider<
                           LayoutConformanceComponentDescriptor>());
+    providerRegistry->add(
+        concreteComponentDescriptorProvider<VirtualViewComponentDescriptor>());
+    providerRegistry->add(concreteComponentDescriptorProvider<
+                          VirtualViewExperimentalComponentDescriptor>());
 
     return providerRegistry;
   }();

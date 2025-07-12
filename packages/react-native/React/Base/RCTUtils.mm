@@ -19,8 +19,11 @@
 #import <CommonCrypto/CommonCrypto.h>
 
 #import <React/RCTUtilsUIOverride.h>
+#import <ReactCommon/RuntimeExecutorSyncUIThreadUtils.h>
 #import "RCTAssert.h"
 #import "RCTLog.h"
+
+using namespace facebook::react;
 
 NSString *const RCTErrorUnspecified = @"EUNSPECIFIED";
 
@@ -302,20 +305,14 @@ void RCTExecuteOnMainQueue(dispatch_block_t block)
 // unless you know what you are doing.
 void RCTUnsafeExecuteOnMainQueueSync(dispatch_block_t block)
 {
-  RCTUnsafeExecuteOnMainQueueSyncWithError(block, @"Sync dispatches to the main queue can deadlock React Native.");
-}
-
-// Please do not use this method
-// unless you know what you are doing.
-void RCTUnsafeExecuteOnMainQueueSyncWithError(dispatch_block_t block, NSString *context)
-{
   if (RCTIsMainQueue()) {
     block();
     return;
   }
 
-  if (facebook::react::ReactNativeFeatureFlags::disableMainQueueSyncDispatchIOS()) {
-    RCTLogError(@"RCTUnsafeExecuteOnMainQueueSync: %@", context);
+  if (ReactNativeFeatureFlags::enableMainQueueCoordinatorOnIOS()) {
+    unsafeExecuteOnMainThreadSync(block);
+    return;
   }
 
   dispatch_sync(dispatch_get_main_queue(), ^{
@@ -341,8 +338,9 @@ static void RCTUnsafeExecuteOnMainQueueOnceSync(dispatch_once_t *onceToken, disp
     return;
   }
 
-  if (facebook::react::ReactNativeFeatureFlags::disableMainQueueSyncDispatchIOS()) {
-    RCTLogError(@"RCTUnsafeExecuteOnMainQueueOnceSync: Sync dispatches to the main queue can deadlock React Native.");
+  if (ReactNativeFeatureFlags::enableMainQueueCoordinatorOnIOS()) {
+    unsafeExecuteOnMainThreadSync(block);
+    return;
   }
 
   dispatch_sync(dispatch_get_main_queue(), executeOnce);

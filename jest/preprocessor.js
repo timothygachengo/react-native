@@ -12,7 +12,7 @@
 
 'use strict';
 
-// eslint-disable-next-line lint/sort-imports
+// eslint-disable-next-line @react-native/monorepo/sort-imports
 const {
   transformFromAstSync: babelTransformFromAstSync,
   transformSync: babelTransformSync,
@@ -32,7 +32,7 @@ if (process.env.FBSOURCE_ENV === '1') {
   require('@fb-tools/babel-register');
 } else {
   // Register Babel to allow local packages to be loaded from source
-  require('../scripts/babel-register').registerForMonorepo();
+  require('../scripts/shared/babelRegister').registerForMonorepo();
 }
 
 const transformer = require('@react-native/metro-babel-transformer');

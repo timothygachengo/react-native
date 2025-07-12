@@ -7,21 +7,11 @@
 
 package com.facebook.react.bridge
 
-import com.facebook.react.common.annotations.internal.LegacyArchitecture
-import com.facebook.react.common.annotations.internal.LegacyArchitectureLogLevel
-import com.facebook.react.common.annotations.internal.LegacyArchitectureLogger
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
-@LegacyArchitecture
 public object JSONArguments {
-
-  init {
-    LegacyArchitectureLogger.assertLegacyArchitecture(
-        "JSONArguments", LegacyArchitectureLogLevel.WARNING)
-  }
-
   /**
    * Parse JSONObject to ReadableMap
    *
@@ -36,9 +26,7 @@ public object JSONArguments {
     val result = buildReadableMap {
       while (keys.hasNext()) {
         val key = keys.next()
-        val value = obj.get(key)
-
-        when (value) {
+        when (val value = obj.get(key)) {
           is JSONObject -> put(key, fromJSONObject(value))
           is JSONArray -> put(key, fromJSONArray(value))
           is String -> put(key, value)
@@ -82,9 +70,7 @@ public object JSONArguments {
   public fun fromJSONArray(arr: JSONArray): ReadableArray {
     val result = buildReadableArray {
       repeat(arr.length()) {
-        val value = arr.get(it)
-
-        when (value) {
+        when (val value = arr.get(it)) {
           is JSONObject -> add(fromJSONObject(value))
           is JSONArray -> add(fromJSONArray(value))
           is String -> add(value)

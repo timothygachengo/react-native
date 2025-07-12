@@ -117,13 +117,18 @@ jobs:
           flavor: ${{ matrix.flavor }}
 
   prebuild_apple_dependencies:
-    uses: ./.github/workflows/prebuild-ios.yml
+    uses: ./.github/workflows/prebuild-ios-dependencies.yml
     secrets: inherit
+
+  prebuild_react_native_core:
+    uses: ./.github/workflows/prebuild-ios-core.yml
+    secrets: inherit
+    needs: [prebuild_apple_dependencies, build_hermes_macos]
 
   test_ios_rntester_ruby_3_2_0:
     runs-on: macos-14
     needs:
-      [build_apple_slices_hermes, prepare_hermes_workspace, build_hermes_macos, prebuild_apple_dependencies]
+      [build_apple_slices_hermes, prepare_hermes_workspace, build_hermes_macos, prebuild_apple_dependencies, prebuild_react_native_core]
     env:
       HERMES_WS_DIR: /tmp/hermes
       HERMES_TARBALL_ARTIFACTS_DIR: /tmp/hermes/hermes-runtime-darwin
@@ -136,31 +141,12 @@ jobs:
           ruby-version: "3.2.0"
           hermes-version: ${{ needs.prepare_hermes_workspace.outputs.hermes-version }}
           react-native-version: ${{ needs.prepare_hermes_workspace.outputs.react-native-version }}
-
-  test_ios_rntester_dynamic_frameworks:
-    runs-on: macos-14
-    needs:
-      [build_apple_slices_hermes, prepare_hermes_workspace, build_hermes_macos, prebuild_apple_dependencies]
-    env:
-      HERMES_WS_DIR: /tmp/hermes
-      HERMES_TARBALL_ARTIFACTS_DIR: /tmp/hermes/hermes-runtime-darwin
-    continue-on-error: true
-    strategy:
-      fail-fast: false
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Run it
-        uses: ./.github/actions/test-ios-rntester
-        with:
-          use-frameworks: DynamicFrameworks
-          hermes-version: ${{ needs.prepare_hermes_workspace.outputs.hermes-version }}
-          react-native-version: ${{ needs.prepare_hermes_workspace.outputs.react-native-version }}
+          flavor: Debug
 
   test_ios_rntester:
     runs-on: macos-14-large
     needs:
-      [build_apple_slices_hermes, prepare_hermes_workspace, build_hermes_macos, prebuild_apple_dependencies]
+      [build_apple_slices_hermes, prepare_hermes_workspace, build_hermes_macos, prebuild_apple_dependencies, prebuild_react_native_core]
     env:
       HERMES_WS_DIR: /tmp/hermes
       HERMES_TARBALL_ARTIFACTS_DIR: /tmp/hermes/hermes-runtime-darwin
@@ -169,14 +155,14 @@ jobs:
       fail-fast: false
       matrix:
         flavor: [Debug, Release]
+        frameworks: [StaticLibraries, DynamicFrameworks]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Run it
         uses: ./.github/actions/test-ios-rntester
         with:
-          run-unit-tests: "false"
-          use-frameworks: StaticLibraries
+          use-frameworks: ${{ matrix.frameworks }}
           hermes-version: ${{ needs.prepare_hermes_workspace.outputs.hermes-version }}
           react-native-version: ${{ needs.prepare_hermes_workspace.outputs.react-native-version }}
           flavor: ${{ matrix.flavor }}
@@ -196,6 +182,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: ./.github/actions/setup-node
       - name: Download App
         uses: actions/download-artifact@v4
         with:
@@ -257,6 +245,14 @@ jobs:
       - name: Print third-party folder
         shell: bash
         run: ls -lR /tmp/third-party
+      - name: Download React Native Prebuilds
+        uses: actions/download-artifact@v4
+        with:
+          name: ReactCore${{ matrix.flavor }}.xcframework.tar.gz
+          path: /tmp/ReactCore
+      - name: Print ReactCore folder
+        shell: bash
+        run: ls -lR /tmp/ReactCore
       - name: Prepare artifacts
         run: |
           REACT_NATIVE_PKG=$(find /tmp/react-native-tmp -type f -name "*.tgz")
@@ -279,6 +275,7 @@ jobs:
           NEW_ARCH_ENABLED=1
 
           export RCT_USE_LOCAL_RN_DEP=/tmp/third-party/ReactNativeDependencies${{ matrix.flavor }}.xcframework.tar.gz
+          export RCT_TESTONLY_RNCORE_TARBALL_PATH="/tmp/ReactCore/ReactCore${{ matrix.flavor }}.xcframework.tar.gz"
           HERMES_ENGINE_TARBALL_PATH=$HERMES_PATH RCT_NEW_ARCH_ENABLED=$NEW_ARCH_ENABLED bundle exec pod install
 
           xcodebuild \
@@ -439,14 +436,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: rntester-${{ matrix.flavor }}
-          path: ./packages/rn-tester/android/app/build/outputs/apk/hermes/${{ matrix.flavor }}/
+          path: ./packages/rn-tester/android/app/build/outputs/apk/${{ matrix.flavor }}/
       - name: Print folder structure
-        run: ls -lR ./packages/rn-tester/android/app/build/outputs/apk/hermes/${{ matrix.flavor }}/
+        run: ls -lR ./packages/rn-tester/android/app/build/outputs/apk/${{ matrix.flavor }}/
       - name: Run E2E Tests
         uses: ./.github/actions/maestro-android
         timeout-minutes: 60
         with:
-          app-path: ./packages/rn-tester/android/app/build/outputs/apk/hermes/${{ matrix.flavor }}/app-hermes-x86-${{ matrix.flavor }}.apk
+          app-path: ./packages/rn-tester/android/app/build/outputs/apk/${{ matrix.flavor }}/app-x86-${{ matrix.flavor }}.apk
           app-id: com.facebook.react.uiapp
           maestro-flow: ./packages/rn-tester/.maestro
           flavor: ${{ matrix.flavor }}
@@ -462,6 +459,7 @@ jobs:
         build_hermesc_windows,
         build_android,
         prebuild_apple_dependencies,
+        prebuild_react_native_core,
       ]
     container:
       image: reactnativecommunity/react-native-android:latest
@@ -525,7 +523,7 @@ jobs:
       - name: Build the Helloworld application for ${{ matrix.flavor }} with Architecture set to New Architecture.
         shell: bash
         run: |
-          cd packages/helloworld/android
+          cd private/helloworld/android
           args=()
           if [[ ${{ matrix.flavor }} == "Release" ]]; then
             args+=(--prod)
@@ -535,12 +533,12 @@ jobs:
         uses: actions/upload-artifact@v4.3.4
         with:
           name: helloworld-apk-${{ matrix.flavor }}-NewArch-hermes
-          path: ./packages/helloworld/android/app/build/outputs/apk/
+          path: ./private/helloworld/android/app/build/outputs/apk/
           compression-level: 0
 
   test_ios_helloworld_with_ruby_3_2_0:
     runs-on: macos-14
-    needs: [prepare_hermes_workspace, build_hermes_macos, prebuild_apple_dependencies] # prepare_hermes_workspace must be there because we need its reference to retrieve a couple of outputs
+    needs: [prepare_hermes_workspace, build_hermes_macos, prebuild_apple_dependencies, prebuild_react_native_core] # prepare_hermes_workspace must be there because we need its reference to retrieve a couple of outputs
     env:
       PROJECT_NAME: iOSTemplateProject
       HERMES_WS_DIR: /tmp/hermes
@@ -557,7 +555,7 @@ jobs:
 
   test_ios_helloworld:
     runs-on: macos-14
-    needs: [prepare_hermes_workspace, build_hermes_macos, prebuild_apple_dependencies] # prepare_hermes_workspace must be there because we need its reference to retrieve a couple of outputs
+    needs: [prepare_hermes_workspace, build_hermes_macos, prebuild_apple_dependencies, prebuild_react_native_core] # prepare_hermes_workspace must be there because we need its reference to retrieve a couple of outputs
     strategy:
       matrix:
         flavor: [Debug, Release]
@@ -585,7 +583,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: ["22", "20", "18"]
+        node-version: ["24", "22"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -601,7 +599,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Run all the Linters
+      - name: Run all the linters
         uses: ./.github/actions/lint
         with:
           github-token: ${{ env.GH_TOKEN }}

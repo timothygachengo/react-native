@@ -18,11 +18,11 @@ import * as version from '../../utils/version';
 import attachKeyHandlers from './attachKeyHandlers';
 import {createDevServerMiddleware} from './middleware';
 import {createDevMiddleware} from '@react-native/dev-middleware';
-import chalk from 'chalk';
 import Metro from 'metro';
 import {Terminal} from 'metro-core';
 import path from 'path';
 import url from 'url';
+import {styleText} from 'util';
 
 export type StartCommandArgs = {
   assetPlugins?: string[],
@@ -68,7 +68,10 @@ async function runServer(
   const devServerUrl = url.format({protocol, hostname, port});
 
   console.info(
-    chalk.blue(`\nWelcome to React Native v${cliConfig.reactNativeVersion}`),
+    styleText(
+      'blue',
+      `\nWelcome to React Native v${cliConfig.reactNativeVersion}`,
+    ),
   );
 
   const serverStatus = await isDevServerRunning(devServerUrl, projectRoot);
@@ -80,7 +83,7 @@ async function runServer(
     return;
   } else if (serverStatus === 'port_taken') {
     console.error(
-      `${chalk.red('error')}: Another process is running on port ${port}. Please terminate this ` +
+      `${styleText('red', 'error')}: Another process is running on port ${port}. Please terminate this ` +
         'process and try again, or use another port with "--port".',
     );
     return;
@@ -131,7 +134,7 @@ async function runServer(
         terminalReporter.update({
           type: 'unstable_server_log',
           level: 'info',
-          data: `Dev server ready. ${chalk.dim('Press Ctrl+C to exit.')}`,
+          data: `Dev server ready. ${styleText('dim', 'Press Ctrl+C to exit.')}`,
         });
         attachKeyHandlers({
           devServerUrl,
@@ -144,7 +147,7 @@ async function runServer(
   // $FlowIgnore[cannot-write] Assigning to readonly property
   metroConfig.reporter = reporter;
 
-  const serverInstance = await Metro.runServer(metroConfig, {
+  await Metro.runServer(metroConfig, {
     host: args.host,
     secure: args.https,
     secureCert: args.cert,
@@ -157,18 +160,6 @@ async function runServer(
   });
 
   reportEvent = eventsSocketEndpoint.reportEvent;
-
-  // In Node 8, the default keep-alive for an HTTP connection is 5 seconds. In
-  // early versions of Node 8, this was implemented in a buggy way which caused
-  // some HTTP responses (like those containing large JS bundles) to be
-  // terminated early.
-  //
-  // As a workaround, arbitrarily increase the keep-alive from 5 to 30 seconds,
-  // which should be enough to send even the largest of JS bundles.
-  //
-  // For more info: https://github.com/nodejs/node/issues/13391
-  //
-  serverInstance.keepAliveTimeout = 30000;
 
   await version.logIfUpdateAvailable(cliConfig, terminalReporter);
 }

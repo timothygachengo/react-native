@@ -8,8 +8,8 @@
  * @format
  */
 
-const {publishPackage} = require('../npm-utils');
-const {getPackages} = require('../utils/monorepo');
+const {publishPackage} = require('../releases/utils/npm-utils');
+const {getPackages} = require('../shared/monorepoUtils');
 const {execSync} = require('child_process');
 const {parseArgs} = require('util');
 
@@ -152,7 +152,6 @@ function runPublish(
 }
 
 if (require.main === module) {
-  // eslint-disable-next-line no-void
   void main();
 }
 

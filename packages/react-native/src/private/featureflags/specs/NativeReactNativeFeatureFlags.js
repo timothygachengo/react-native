@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<afe099f339fe761a3856eb3f43dc6ae7>>
+ * @generated SignedSource<<a0c97a9338cbe91cc3de4db2fa5f27d2>>
  * @flow strict
  * @noformat
  */
@@ -26,19 +26,19 @@ import * as TurboModuleRegistry from '../../../../Libraries/TurboModule/TurboMod
 export interface Spec extends TurboModule {
   +commonTestFlag?: () => boolean;
   +commonTestFlagWithoutNativeImplementation?: () => boolean;
-  +animatedShouldSignalBatch?: () => boolean;
-  +avoidCeilingAvailableAndroidTextWidth?: () => boolean;
   +cxxNativeAnimatedEnabled?: () => boolean;
-  +disableMainQueueSyncDispatchIOS?: () => boolean;
+  +cxxNativeAnimatedRemoveJsSync?: () => boolean;
   +disableMountItemReorderingAndroid?: () => boolean;
   +disableTextLayoutManagerCacheAndroid?: () => boolean;
   +enableAccessibilityOrder?: () => boolean;
   +enableAccumulatedUpdatesInRawPropsAndroid?: () => boolean;
+  +enableAndroidTextMeasurementOptimizations?: () => boolean;
   +enableBridgelessArchitecture?: () => boolean;
   +enableCppPropsIteratorSetter?: () => boolean;
   +enableCustomFocusSearchOnClippedElementsAndroid?: () => boolean;
   +enableDestroyShadowTreeRevisionAsync?: () => boolean;
   +enableDoubleMeasurementFixAndroid?: () => boolean;
+  +enableEagerMainQueueModulesOnIOS?: () => boolean;
   +enableEagerRootViewAttachment?: () => boolean;
   +enableFabricLogs?: () => boolean;
   +enableFabricRenderer?: () => boolean;
@@ -46,11 +46,10 @@ export interface Spec extends TurboModule {
   +enableFontScaleChangesUpdatingLayout?: () => boolean;
   +enableIOSTextBaselineOffsetPerLine?: () => boolean;
   +enableIOSViewClipToPaddingBox?: () => boolean;
-  +enableIntersectionObserverEventLoopIntegration?: () => boolean;
+  +enableInteropViewManagerClassLookUpOptimizationIOS?: () => boolean;
   +enableLayoutAnimationsOnAndroid?: () => boolean;
   +enableLayoutAnimationsOnIOS?: () => boolean;
   +enableMainQueueCoordinatorOnIOS?: () => boolean;
-  +enableMainQueueModulesOnIOS?: () => boolean;
   +enableModuleArgumentNSNullConversionIOS?: () => boolean;
   +enableNativeCSSParsing?: () => boolean;
   +enableNetworkEventReporting?: () => boolean;
@@ -63,14 +62,17 @@ export interface Spec extends TurboModule {
   +enableViewRecycling?: () => boolean;
   +enableViewRecyclingForText?: () => boolean;
   +enableViewRecyclingForView?: () => boolean;
+  +enableVirtualViewDebugFeatures?: () => boolean;
+  +enableVirtualViewRenderState?: () => boolean;
+  +enableVirtualViewWindowFocusDetection?: () => boolean;
   +fixMappingOfEventPrioritiesBetweenFabricAndReact?: () => boolean;
   +fuseboxEnabledRelease?: () => boolean;
   +fuseboxNetworkInspectionEnabled?: () => boolean;
-  +incorporateMaxLinesDuringAndroidLayout?: () => boolean;
+  +hideOffscreenVirtualViewsOnIOS?: () => boolean;
+  +preparedTextCacheSize?: () => number;
   +traceTurboModulePromiseRejectionsOnAndroid?: () => boolean;
   +updateRuntimeShadowNodeReferencesOnCommit?: () => boolean;
   +useAlwaysAvailableJSErrorHandling?: () => boolean;
-  +useAndroidTextLayoutWidthDirectly?: () => boolean;
   +useFabricInterop?: () => boolean;
   +useNativeViewConfigsInBridgelessMode?: () => boolean;
   +useOptimizedEventBatchingOnAndroid?: () => boolean;

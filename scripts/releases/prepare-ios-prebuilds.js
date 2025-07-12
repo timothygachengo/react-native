@@ -16,7 +16,7 @@ const {setupDependencies} = require('./ios-prebuild/setupDependencies');
 const {createSwiftPackageFile} = require('./ios-prebuild/swift-package');
 const path = require('path');
 
-require('../babel-register').registerForScript();
+require('../shared/babelRegister').registerForScript();
 
 const THIRD_PARTY_PATH = 'packages/react-native/third-party';
 const BUILD_DESTINATION = '.build';
@@ -73,6 +73,5 @@ async function main() {
 }
 
 if (require.main === module) {
-  // eslint-disable-next-line no-void
   void main();
 }

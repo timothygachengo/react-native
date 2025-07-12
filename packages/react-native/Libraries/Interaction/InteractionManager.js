@@ -73,6 +73,8 @@ const InteractionManagerImpl = {
    * Notify manager that an interaction has started.
    */
   createInteractionHandle(): Handle {
+    /* $FlowFixMe[constant-condition] Error discovered during Constant
+     * Condition roll out. See https://fburl.com/workplace/1v97vimq. */
     DEBUG && console.log('InteractionManager: create interaction handle');
     _scheduleUpdate();
     const handle = ++_inc;
@@ -84,6 +86,8 @@ const InteractionManagerImpl = {
    * Notify manager that an interaction has completed.
    */
   clearInteractionHandle(handle: Handle) {
+    /* $FlowFixMe[constant-condition] Error discovered during Constant
+     * Condition roll out. See https://fburl.com/workplace/1v97vimq. */
     DEBUG && console.log('InteractionManager: clear interaction handle');
     invariant(!!handle, 'InteractionManager: Must provide a handle to clear.');
     _scheduleUpdate();
@@ -229,7 +233,8 @@ function _processUpdate() {
  */
 const InteractionManager = (
   ReactNativeFeatureFlags.disableInteractionManager()
-    ? require('./InteractionManagerStub').default
+    ? // $FlowFixMe[incompatible-variance]
+      require('./InteractionManagerStub').default
     : InteractionManagerImpl
 ) as typeof InteractionManagerImpl;
 

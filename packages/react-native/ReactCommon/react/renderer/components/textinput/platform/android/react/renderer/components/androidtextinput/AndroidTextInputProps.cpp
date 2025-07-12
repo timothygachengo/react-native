@@ -357,15 +357,6 @@ SharedDebugStringConvertibleList AndroidTextInputProps::getDebugProps() const {
 }
 #endif
 
-static folly::dynamic toDynamic(
-    const std::vector<std::string>& acceptDragAndDropTypes) {
-  folly::dynamic acceptDragAndDropTypesArray = folly::dynamic::array();
-  for (const auto& acceptDragAndDropType : acceptDragAndDropTypes) {
-    acceptDragAndDropTypesArray.push_back(acceptDragAndDropType);
-  }
-  return acceptDragAndDropTypesArray;
-}
-
 ComponentName AndroidTextInputProps::getDiffPropsImplementationTarget() const {
   return "TextInput";
 }
@@ -423,6 +414,16 @@ folly::dynamic AndroidTextInputProps::getDiffProps(
       oldProps->paragraphAttributes.android_hyphenationFrequency) {
     result["android_hyphenationFrequency"] =
         toString(paragraphAttributes.android_hyphenationFrequency);
+  }
+
+  if (paragraphAttributes.textAlignVertical !=
+      oldProps->paragraphAttributes.textAlignVertical) {
+    if (!paragraphAttributes.textAlignVertical.has_value()) {
+      result["textAlignVertical"] = nullptr;
+    } else {
+      result["textAlignVertical"] =
+          toString(*paragraphAttributes.textAlignVertical);
+    }
   }
 
   // Base text input props

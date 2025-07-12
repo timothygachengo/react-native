@@ -12,7 +12,9 @@
 #include <react/renderer/uimanager/UIManagerBinding.h>
 #include <react/renderer/uimanager/primitives.h>
 
+#ifdef RN_DISABLE_OSS_PLUGIN_HEADER
 #include "Plugins.h"
+#endif
 
 std::shared_ptr<facebook::react::TurboModule>
 NativeMutationObserverModuleProvider(
@@ -96,7 +98,7 @@ jsi::Value NativeMutationObserver::getPublicInstanceFromShadowNode(
 
 std::vector<jsi::Value>
 NativeMutationObserver::getPublicInstancesFromShadowNodes(
-    const std::vector<ShadowNode::Shared>& shadowNodes) const {
+    const std::vector<std::shared_ptr<const ShadowNode>>& shadowNodes) const {
   std::vector<jsi::Value> publicInstances;
   publicInstances.reserve(shadowNodes.size());
 

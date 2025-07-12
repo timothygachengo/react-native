@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<999bacd5ad8eac2c69f0d7e8d20dcba9>>
+ * @generated SignedSource<<a16b227254e43d57c46479d87bc45bf2>>
  */
 
 /**
@@ -31,19 +31,11 @@ class ReactNativeFeatureFlagsDefaults : public ReactNativeFeatureFlagsProvider {
     return false;
   }
 
-  bool animatedShouldSignalBatch() override {
-    return false;
-  }
-
-  bool avoidCeilingAvailableAndroidTextWidth() override {
-    return true;
-  }
-
   bool cxxNativeAnimatedEnabled() override {
     return false;
   }
 
-  bool disableMainQueueSyncDispatchIOS() override {
+  bool cxxNativeAnimatedRemoveJsSync() override {
     return false;
   }
 
@@ -60,6 +52,10 @@ class ReactNativeFeatureFlagsDefaults : public ReactNativeFeatureFlagsProvider {
   }
 
   bool enableAccumulatedUpdatesInRawPropsAndroid() override {
+    return false;
+  }
+
+  bool enableAndroidTextMeasurementOptimizations() override {
     return false;
   }
 
@@ -80,6 +76,10 @@ class ReactNativeFeatureFlagsDefaults : public ReactNativeFeatureFlagsProvider {
   }
 
   bool enableDoubleMeasurementFixAndroid() override {
+    return false;
+  }
+
+  bool enableEagerMainQueueModulesOnIOS() override {
     return false;
   }
 
@@ -111,8 +111,8 @@ class ReactNativeFeatureFlagsDefaults : public ReactNativeFeatureFlagsProvider {
     return false;
   }
 
-  bool enableIntersectionObserverEventLoopIntegration() override {
-    return true;
+  bool enableInteropViewManagerClassLookUpOptimizationIOS() override {
+    return false;
   }
 
   bool enableLayoutAnimationsOnAndroid() override {
@@ -124,10 +124,6 @@ class ReactNativeFeatureFlagsDefaults : public ReactNativeFeatureFlagsProvider {
   }
 
   bool enableMainQueueCoordinatorOnIOS() override {
-    return false;
-  }
-
-  bool enableMainQueueModulesOnIOS() override {
     return false;
   }
 
@@ -179,6 +175,18 @@ class ReactNativeFeatureFlagsDefaults : public ReactNativeFeatureFlagsProvider {
     return true;
   }
 
+  bool enableVirtualViewDebugFeatures() override {
+    return false;
+  }
+
+  bool enableVirtualViewRenderState() override {
+    return false;
+  }
+
+  bool enableVirtualViewWindowFocusDetection() override {
+    return false;
+  }
+
   bool fixMappingOfEventPrioritiesBetweenFabricAndReact() override {
     return false;
   }
@@ -191,8 +199,12 @@ class ReactNativeFeatureFlagsDefaults : public ReactNativeFeatureFlagsProvider {
     return false;
   }
 
-  bool incorporateMaxLinesDuringAndroidLayout() override {
-    return true;
+  bool hideOffscreenVirtualViewsOnIOS() override {
+    return false;
+  }
+
+  double preparedTextCacheSize() override {
+    return 200.0;
   }
 
   bool traceTurboModulePromiseRejectionsOnAndroid() override {
@@ -205,10 +217,6 @@ class ReactNativeFeatureFlagsDefaults : public ReactNativeFeatureFlagsProvider {
 
   bool useAlwaysAvailableJSErrorHandling() override {
     return false;
-  }
-
-  bool useAndroidTextLayoutWidthDirectly() override {
-    return true;
   }
 
   bool useFabricInterop() override {

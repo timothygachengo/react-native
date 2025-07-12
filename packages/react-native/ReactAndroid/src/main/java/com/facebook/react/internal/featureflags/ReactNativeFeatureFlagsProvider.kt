@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<3f2600dc760fa878ded68e0e15110904>>
+ * @generated SignedSource<<391d35ccb9b7004fd8d9643df9a08ab5>>
  */
 
 /**
@@ -25,13 +25,9 @@ import com.facebook.proguard.annotations.DoNotStrip
 public interface ReactNativeFeatureFlagsProvider {
   @DoNotStrip public fun commonTestFlag(): Boolean
 
-  @DoNotStrip public fun animatedShouldSignalBatch(): Boolean
-
-  @DoNotStrip public fun avoidCeilingAvailableAndroidTextWidth(): Boolean
-
   @DoNotStrip public fun cxxNativeAnimatedEnabled(): Boolean
 
-  @DoNotStrip public fun disableMainQueueSyncDispatchIOS(): Boolean
+  @DoNotStrip public fun cxxNativeAnimatedRemoveJsSync(): Boolean
 
   @DoNotStrip public fun disableMountItemReorderingAndroid(): Boolean
 
@@ -40,6 +36,8 @@ public interface ReactNativeFeatureFlagsProvider {
   @DoNotStrip public fun enableAccessibilityOrder(): Boolean
 
   @DoNotStrip public fun enableAccumulatedUpdatesInRawPropsAndroid(): Boolean
+
+  @DoNotStrip public fun enableAndroidTextMeasurementOptimizations(): Boolean
 
   @DoNotStrip public fun enableBridgelessArchitecture(): Boolean
 
@@ -50,6 +48,8 @@ public interface ReactNativeFeatureFlagsProvider {
   @DoNotStrip public fun enableDestroyShadowTreeRevisionAsync(): Boolean
 
   @DoNotStrip public fun enableDoubleMeasurementFixAndroid(): Boolean
+
+  @DoNotStrip public fun enableEagerMainQueueModulesOnIOS(): Boolean
 
   @DoNotStrip public fun enableEagerRootViewAttachment(): Boolean
 
@@ -65,15 +65,13 @@ public interface ReactNativeFeatureFlagsProvider {
 
   @DoNotStrip public fun enableIOSViewClipToPaddingBox(): Boolean
 
-  @DoNotStrip public fun enableIntersectionObserverEventLoopIntegration(): Boolean
+  @DoNotStrip public fun enableInteropViewManagerClassLookUpOptimizationIOS(): Boolean
 
   @DoNotStrip public fun enableLayoutAnimationsOnAndroid(): Boolean
 
   @DoNotStrip public fun enableLayoutAnimationsOnIOS(): Boolean
 
   @DoNotStrip public fun enableMainQueueCoordinatorOnIOS(): Boolean
-
-  @DoNotStrip public fun enableMainQueueModulesOnIOS(): Boolean
 
   @DoNotStrip public fun enableModuleArgumentNSNullConversionIOS(): Boolean
 
@@ -99,21 +97,27 @@ public interface ReactNativeFeatureFlagsProvider {
 
   @DoNotStrip public fun enableViewRecyclingForView(): Boolean
 
+  @DoNotStrip public fun enableVirtualViewDebugFeatures(): Boolean
+
+  @DoNotStrip public fun enableVirtualViewRenderState(): Boolean
+
+  @DoNotStrip public fun enableVirtualViewWindowFocusDetection(): Boolean
+
   @DoNotStrip public fun fixMappingOfEventPrioritiesBetweenFabricAndReact(): Boolean
 
   @DoNotStrip public fun fuseboxEnabledRelease(): Boolean
 
   @DoNotStrip public fun fuseboxNetworkInspectionEnabled(): Boolean
 
-  @DoNotStrip public fun incorporateMaxLinesDuringAndroidLayout(): Boolean
+  @DoNotStrip public fun hideOffscreenVirtualViewsOnIOS(): Boolean
+
+  @DoNotStrip public fun preparedTextCacheSize(): Double
 
   @DoNotStrip public fun traceTurboModulePromiseRejectionsOnAndroid(): Boolean
 
   @DoNotStrip public fun updateRuntimeShadowNodeReferencesOnCommit(): Boolean
 
   @DoNotStrip public fun useAlwaysAvailableJSErrorHandling(): Boolean
-
-  @DoNotStrip public fun useAndroidTextLayoutWidthDirectly(): Boolean
 
   @DoNotStrip public fun useFabricInterop(): Boolean
 
