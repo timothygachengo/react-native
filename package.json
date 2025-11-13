@@ -1,8 +1,5 @@
 {
-  "name": "@react-native/monorepo",
   "private": true,
-  "version": "1000.0.0",
-  "license": "MIT",
   "packageManager": "yarn@1.22.22",
   "scripts": {
     "android": "yarn --cwd packages/rn-tester android",
@@ -58,6 +55,7 @@
     "@jest/create-cache-key-function": "^29.7.0",
     "@microsoft/api-extractor": "^7.52.2",
     "@octokit/rest": "^22.0.0",
+    "@react-native/eslint-plugin-monorepo": "*",
     "@react-native/metro-babel-transformer": "0.84.0-main",
     "@react-native/metro-config": "0.84.0-main",
     "@tsconfig/node22": "22.0.2",
